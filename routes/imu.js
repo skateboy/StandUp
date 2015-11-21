@@ -10,7 +10,7 @@ router.post('/', function(req, res, next) {
         if (err)
             res.send(err);
 
-        res.json({ message: 'Gyro data point added.' });
+        res.json({ message: 'IMU data point added.' });
     });
 });
 
