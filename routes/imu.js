@@ -1,12 +1,12 @@
 var express = require('express');
 var router = express.Router();
-var Gyro = require('../models/imu');
+var Imu = require('../models/imu');
 
 router.post('/', function(req, res, next) {
-    var gyro = new Gyro();
-    gyro.time = req.body.time;
+    var imu = new Imu();
+    imu.time = req.body.time;
 
-    gyro.save( function(err) {
+    imu.save( function(err) {
         if (err)
             res.send(err);
 
@@ -15,11 +15,11 @@ router.post('/', function(req, res, next) {
 });
 
 router.get('/', function(req, res, next) {
-    Gyro.find( function(err, gyros) {
+    Imu.find( function(err, imus) {
         if (err)
             res.send(err);
 
-        res.json(gyros);
+        res.json(imus);
     })
 });
 
