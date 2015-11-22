@@ -4,7 +4,11 @@ var Imu = require('../models/imu');
 
 router.post('/', function(req, res, next) {
     var imu = new Imu();
+<<<<<<< HEAD
     imu.date = new Date();
+=======
+    imu.time = req.body.time;
+>>>>>>> ca6dbe3295999a817eeac031e860e429abc7d205
 
     imu.save( function(err) {
         if (err)
