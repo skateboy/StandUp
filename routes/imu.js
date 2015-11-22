@@ -1,8 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var Imu = require('../models/imu');
-var Convert = require('../core/convert');
-var Converter = new Convert();
+var Convert = require('../core/newConvert');
+//var Converter = new Convert();
 
 router.post('/', function(req, res, next) {
     var imu = new Imu();
@@ -15,10 +15,10 @@ router.post('/', function(req, res, next) {
     imu.gyro_y = req.body.rotY;
     imu.gyro_z = req.body.rotZ;
 
-    Converter.pushAccel(imu.acc_x, imu.acc_y, imu.acc_z);
+    Convert.pushAccel(imu.acc_x, imu.acc_y, imu.acc_z);
     //Converter.pushGyro(imu.gyro_x, imu.gyro_y, imu.gyro_z);
 
-    if (Converter.isTransition()) {
+    if (Convert.isTransition()) {
         console.log('Adding transition to database...');
         imu.save( function(err) {
             if (err)
@@ -26,7 +26,7 @@ router.post('/', function(req, res, next) {
         });
     }
 
-    res.json({ message: Converter.state });
+    res.json({ message: Convert.state });
 });
 
 router.get('/', function(req, res, next) {
