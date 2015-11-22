@@ -22,8 +22,18 @@
 <br>
 
     <div class="container">
+      <div style="row">
+        <div style="col-md-6">
       <input type="radio" name="mode" value="grouped"> Grouped</input>
       <input type="radio" name="mode" value="stacked" checked> Stacked</input>
+    </div>
+    <br>
+      <div class="input-color" class="col-md-6">
+    <input type="text" value="Orange" />
+    <div class="color-box" style="background-color: #FF850A;"></div>
+    <!-- Replace "#FF850A" to change the color -->
+</div>
+</div>
     <div class="dropdown" style="margin-left: 60vw;">
     <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Choose Time Frame
     <span class="caret"></span></button>
@@ -40,7 +50,6 @@
     var changeIt = function(inte){
       clearAll();
       var m = parseInt(inte);
-      console.log(m);
       runTheProgram(m);
     }
     var clearAll = function(){
@@ -48,15 +57,13 @@
     }
     var runTheProgram = function(uy){
 var n = 2, // number of layers
-    m = uy, // number of samples per layer
+    m = 8, // number of samples per layer
+    t = 1,
     stack = d3.layout.stack(),
     layers = stack(d3.range(n).map(function() { return bumpLayer(m, .1); })),
     yGroupMax = d3.max(layers, function(layer) { return d3.max(layer, function(d) { return d.y; }); }),
     yStackMax = d3.max(layers, function(layer) { return d3.max(layer, function(d) { return d.y0 + d.y; }); });
 
-
-
-console.log(layers);
 
 var margin = {top: 40, right: 10, bottom: 20, left: 10},
     width = 960 - margin.left - margin.right,
@@ -148,10 +155,13 @@ function transitionStacked() {
       .attr("width", x.rangeBand());
 }
 
+
 // Inspired by Lee Byron's test data generator.
 function bumpLayer(n, o) {
+  var stand = ["4","6","2","6","5","1","12","8"];
+  var sitting = ["8","3","4","3","10","2","6","16"];
 
-  function bump(a) {
+/*  function bump(a) {
     var x = 1 / (.1 + Math.random()),
         y = 2 * Math.random() - .5,
         z = 10 / (.1 + Math.random());
@@ -160,11 +170,19 @@ function bumpLayer(n, o) {
      a[i] += x * Math.exp(-w * w);
     a[i] += 1
     }
-  }
+  }*/
 
   var a = [], i;
-  for (i = 0; i < n; ++i) a[i] = .1*(i+1);
-  for (i = 0; i < 5; ++i) bump(a);
+  if(t == 1) {
+    for (i = 0; i < n; ++i) a[i] = stand[i];
+    t = t + 1;
+  }
+  else {
+    for (i = 0; i < n; ++i){
+      a[i] = parseInt(sitting[i]);
+    }
+  }
+  console.log(a);
   return a.map(function(d, i) { return {x: i, y: Math.max(0, d)}; });
 }
 }
