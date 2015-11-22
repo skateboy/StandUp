@@ -5,21 +5,28 @@ var Convert = require('../core/convert');
 var Converter = new Convert();
 
 router.post('/', function(req, res, next) {
-    /*
     var imu = new Imu();
     imu.date = new Date();
+    imu.acc_x = req.body.accX;
+    imu.acc_y = req.body.accY;
+    imu.acc_z = req.body.accZ;
 
-    imu.save( function(err) {
-        if (err)
-            res.send(err);
+    imu.gyro_x = req.body.rotX;
+    imu.gyro_y = req.body.rotY;
+    imu.gyro_z = req.body.rotZ;
 
-        res.json({ message: 'IMU data point added.' });
-    });
-    */
-    Converter.pushAccel(imu.accel_x, imu.accel_y, imu.accel_z);
-    Converter.pushGyro(imu.gyro_x, imu.gyro_y, imu.gyro_z);
+    Converter.pushAccel(imu.acc_x, imu.acc_y, imu.acc_z);
+    //Converter.pushGyro(imu.gyro_x, imu.gyro_y, imu.gyro_z);
 
-    res.json({ message: 'IMU data point added.' });
+    if (Converter.isTransition()) {
+        console.log('Adding transition to database...');
+        imu.save( function(err) {
+            if (err)
+                res.send(err);
+        });
+    }
+
+    res.json({ message: Converter.state });
 });
 
 router.get('/', function(req, res, next) {
