@@ -1,62 +1,9 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-    <script src="//d3js.org/d3.v3.min.js"></script>
-    <script type="javascript/text" src="/js/root.js"></script>
-  </head>
-  <body class="container-fluid">
-    <br><br>
-    <div class="row" style="background-color: black; color: white; height: 10vh; padding: 15px" >
-      <div class="col-md-6" class="text-center" >
-        <p>Welcome to <%= title %></p>
-      </div>
-      <div class="col-md-6" class="text-center">
-        Personel Info
-      </div>
-    </div>
-<br>
-
-    <div class="container">
-      <input type="radio" name="mode" value="grouped"> Grouped</input>
-      <input type="radio" name="mode" value="stacked" checked> Stacked</input>
-    <div class="dropdown" style="margin-left: 60vw;">
-    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Choose Time Frame
-    <span class="caret"></span></button>
-    <ul class="dropdown-menu">
-      <li onclick="changeIt(30)"><a>Month</a></li>
-      <li onclick="changeIt(7)"><a>Week</a></li>
-      <li onclick="changeIt(24)"><a>Day</a></li>
-    </ul>
-  </div>
-</div>
-
-    <script>
-
-    var changeIt = function(inte){
-      clearAll();
-      var m = parseInt(inte);
-      console.log(m);
-      runTheProgram(m);
-    }
-    var clearAll = function(){
-      d3.select("body").selectAll("svg").remove();
-    }
-    var runTheProgram = function(uy){
-var n = 2, // number of layers
-    m = uy, // number of samples per layer
+var n = 4, // number of layers
+    m = 58, // number of samples per layer
     stack = d3.layout.stack(),
     layers = stack(d3.range(n).map(function() { return bumpLayer(m, .1); })),
     yGroupMax = d3.max(layers, function(layer) { return d3.max(layer, function(d) { return d.y; }); }),
     yStackMax = d3.max(layers, function(layer) { return d3.max(layer, function(d) { return d.y0 + d.y; }); });
-
-
-
-console.log(layers);
 
 var margin = {top: 40, right: 10, bottom: 20, left: 10},
     width = 960 - margin.left - margin.right,
@@ -64,7 +11,7 @@ var margin = {top: 40, right: 10, bottom: 20, left: 10},
 
 var x = d3.scale.ordinal()
     .domain(d3.range(m))
-    .rangeRoundBands([0, width], .2);
+    .rangeRoundBands([0, width], .08);
 
 var y = d3.scale.linear()
     .domain([0, yStackMax])
@@ -72,11 +19,11 @@ var y = d3.scale.linear()
 
 var color = d3.scale.linear()
     .domain([0, n - 1])
-    .range(["#cc3322", "#ff6644"]);
+    .range(["#aad", "#556"]);
 
 var xAxis = d3.svg.axis()
     .scale(x)
-    .tickSize(4)
+    .tickSize(0)
     .tickPadding(6)
     .orient("bottom");
 
@@ -98,7 +45,7 @@ var rect = layer.selectAll("rect")
     .attr("x", function(d) { return x(d.x); })
     .attr("y", height)
     .attr("width", x.rangeBand())
-    .attr("height", 0)
+    .attr("height", 0);
 
 rect.transition()
     .delay(function(d, i) { return i * 10; })
@@ -157,18 +104,12 @@ function bumpLayer(n, o) {
         z = 10 / (.1 + Math.random());
     for (var i = 0; i < n; i++) {
       var w = (i / n - y) * z;
-     a[i] += x * Math.exp(-w * w);
-    a[i] += 1
+      a[i] += x * Math.exp(-w * w);
     }
   }
 
   var a = [], i;
-  for (i = 0; i < n; ++i) a[i] = .1*(i+1);
+  for (i = 0; i < n; ++i) a[i] = o + o * Math.random();
   for (i = 0; i < 5; ++i) bump(a);
   return a.map(function(d, i) { return {x: i, y: Math.max(0, d)}; });
 }
-}
-
-</script>
-  </body>
-</html>
