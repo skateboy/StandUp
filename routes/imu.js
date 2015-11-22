@@ -1,8 +1,11 @@
 var express = require('express');
 var router = express.Router();
 var Imu = require('../models/imu');
+var Convert = require('../core/convert');
+var Converter = new Convert();
 
 router.post('/', function(req, res, next) {
+    /*
     var imu = new Imu();
     imu.date = new Date();
 
@@ -12,6 +15,11 @@ router.post('/', function(req, res, next) {
 
         res.json({ message: 'IMU data point added.' });
     });
+    */
+    Converter.pushAccel(imu.accel_x, imu.accel_y, imu.accel_z);
+    Converter.pushGyro(imu.gyro_x, imu.gyro_y, imu.gyro_z);
+
+    res.json({ message: 'IMU data point added.' });
 });
 
 router.get('/', function(req, res, next) {
