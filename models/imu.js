@@ -3,7 +3,7 @@ var Schema   = mongoose.Schema;
 
 var IMUSchema = new Schema ({
     // Timestamp
-    time  : Date,
+    date  : Date,
     // Gyroscope
     rot_x : Number,
     rot_y : Number,
@@ -13,5 +13,6 @@ var IMUSchema = new Schema ({
     acc_y : Number,
     acc_z : Number
 });
+
 
 module.exports = mongoose.model('IMU', IMUSchema);

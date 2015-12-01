@@ -1,11 +1,213 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <title>Express</title>
+    <link rel='stylesheet' href='stylesheets/style.css' />
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script type="javascript/text" src="js/root.js"></script>
   </head>
-  <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
+  <body class="container-fluid">
+    <br><br>
+    <div class="row" style="background-color: black; color: white; height: 10vh; padding: 15px" >
+      <div class="col-md-6" class="text-center" >
+        <p>Welcome to Express</p>
+        <% if(state) { %>
+          <h2>I have a true state</h2>
+        <% } %>
+      </div>
+      <div class="col-md-6" class="text-center">
+        Personel Info
+      </div>
+    </div>
+<br>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4">
+      <input type="radio" name="mode" value="grouped"> Grouped</input>
+      <input type="radio" name="mode" value="stacked" checked style="margin-left: 30px"> Stacked</input>
+    </div>
+      <div class="input-color" class="col-md-8">
+    <input type="text" value="Orange" />
+    <div class="color-box" style="background-color: 'black';"></div>
+    <div class="color-box" style="background-color: black;"></div>
+    <!-- Replace "#FF850A" to change the color -->
+</div>
+</div>
+    <div class="dropdown" style="margin-left: 60vw;">
+    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Choose Time Frame
+    <span class="caret"></span></button>
+    <ul class="dropdown-menu">
+      <li onclick="changeIt(30)"><a>Month</a></li>
+      <li onclick="changeIt(7)"><a>Week</a></li>
+      <li onclick="changeIt(24)"><a>Day</a></li>
+    </ul>
+  </div>
+</div>
+<div>
+
+    <script>
+    var myVar = setInterval(myTimer, 1000);
+    var i = 1;
+    while(i > 0) {
+        var flag = <%= state %>;
+        console.log("works");
+        if(flag){
+          $('#my_img').attr('src', "stand.jpg");
+        }
+        else{
+          $('#my_img').attr('src', "sit.jpg");
+        }
+      }
+
+    var changeIt = function(inte){
+      clearAll();
+      var m = parseInt(inte);
+      runTheProgram(m);
+    }
+    var clearAll = function(){
+      d3.select("body").selectAll("svg").remove();
+    }
+
+      var runTheProgram = function(uy){
+var n = 2, // number of layers
+    m = 8, // number of samples per layer
+    t = 1,
+    stack = d3.layout.stack(),
+    layers = stack(d3.range(n).map(function() { return bumpLayer(m, .1); })),
+    yGroupMax = d3.max(layers, function(layer) { return d3.max(layer, function(d) { return d.y; }); }),
+    yStackMax = d3.max(layers, function(layer) { return d3.max(layer, function(d) { return d.y0 + d.y; }); });
+
+
+var margin = {top: 40, right: 10, bottom: 20, left: 10},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+var x = d3.scale.ordinal()
+    .domain(d3.range(m))
+    .rangeRoundBands([0, width], .2);
+
+var y = d3.scale.linear()
+    .domain([0, yStackMax])
+    .range([height, 0]);
+
+var color = d3.scale.linear()
+    .domain([0, n - 1])
+    .range(["#cc3322", "#ff6644"]);
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .tickSize(4)
+    .tickPadding(6)
+    .orient("bottom");
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var layer = svg.selectAll(".layer")
+    .data(layers)
+  .enter().append("g")
+    .attr("class", "layer")
+    .style("fill", function(d, i) { return color(i); });
+
+var rect = layer.selectAll("rect")
+    .data(function(d) { return d; })
+  .enter().append("rect")
+    .attr("x", function(d) { return x(d.x); })
+    .attr("y", height)
+    .attr("width", x.rangeBand())
+    .attr("height", 0)
+
+rect.transition()
+    .delay(function(d, i) { return i * 10; })
+    .attr("y", function(d) { return y(d.y0 + d.y); })
+    .attr("height", function(d) { return y(d.y0) - y(d.y0 + d.y); });
+
+svg.append("g")
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(xAxis);
+
+d3.selectAll("input").on("change", change);
+
+var timeout = setTimeout(function() {
+  d3.select("input[value=\"grouped\"]").property("checked", true).each(change);
+}, 2000);
+
+function change() {
+  clearTimeout(timeout);
+  if (this.value === "grouped") transitionGrouped();
+  else transitionStacked();
+}
+
+function transitionGrouped() {
+  y.domain([0, yGroupMax]);
+
+  rect.transition()
+      .duration(500)
+      .delay(function(d, i) { return i * 10; })
+      .attr("x", function(d, i, j) { return x(d.x) + x.rangeBand() / n * j; })
+      .attr("width", x.rangeBand() / n)
+    .transition()
+      .attr("y", function(d) { return y(d.y); })
+      .attr("height", function(d) { return height - y(d.y); });
+}
+
+function transitionStacked() {
+  y.domain([0, yStackMax]);
+
+  rect.transition()
+      .duration(500)
+      .delay(function(d, i) { return i * 10; })
+      .attr("y", function(d) { return y(d.y0 + d.y); })
+      .attr("height", function(d) { return y(d.y0) - y(d.y0 + d.y); })
+    .transition()
+      .attr("x", function(d) { return x(d.x); })
+      .attr("width", x.rangeBand());
+}
+
+
+// Inspired by Lee Byron's test data generator.
+function bumpLayer(n, o) {
+  var stand = ["4","6","2","6","5","1","12","8"];
+  var sitting = ["4","3","4","3","10","2","6","16"];
+
+/*  function bump(a) {
+    var x = 1 / (.1 + Math.random()),
+        y = 2 * Math.random() - .5,
+        z = 10 / (.1 + Math.random());
+    for (var i = 0; i < n; i++) {
+      var w = (i / n - y) * z;
+     a[i] += x * Math.exp(-w * w);
+    a[i] += 1
+    }
+  }*/
+
+  var a = [], i;
+  if(t == 1) {
+    for (i = 0; i < n; ++i) a[i] = stand[i];
+    t = t + 1;
+  }
+  else {
+    for (i = 0; i < n; ++i){
+      a[i] = parseInt(sitting[i]);
+    }
+  }
+  console.log(a);
+  return a.map(function(d, i) { return {x: i, y: Math.max(0, d)}; });
+}
+}
+
+</script>
+</div>
+<p style="margin: auto 30vw;">
+  <img src="stand.jpg" height="100px" width="100px" id="my_img">
+</p>
   </body>
 </html>
